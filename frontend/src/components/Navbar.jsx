@@ -11,7 +11,7 @@ export default function Navbar() {
   const { isDarkMode, toggleTheme } = useTheme();
 
   return (
-    <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-2xl">
+    <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-3xl">
       <nav
         className="flex items-center justify-between gap-3 px-3 py-2.5
                    rounded-2xl border border-[var(--border)]
