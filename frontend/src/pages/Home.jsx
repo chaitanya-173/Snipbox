@@ -12,7 +12,7 @@ import { snipboxDark, snipboxLight } from "../utils/codeEditorTheme";
 import { createSnippet, updateSnippet } from "../services/snippetService";
 
 const editorFontTheme = EditorView.theme({
-  "&": { fontSize: "15.5px" },
+  "&": { fontSize: "14.5px" },
   ".cm-content": {
     fontFamily: "'JetBrains Mono', ui-monospace, monospace",
     paddingTop: "12px",
