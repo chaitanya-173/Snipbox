@@ -43,7 +43,8 @@ export default function Home() {
   const isEditMode = Boolean(editingSnippet);
 
   const initialType =
-    editingSnippet?.type ?? (editingSnippet?.language === "notes" ? "notes" : "code");
+    editingSnippet?.type ??
+    (editingSnippet?.language === "notes" ? "notes" : "code");
 
   const [type, setType] = useState(initialType);
   const [title, setTitle] = useState(editingSnippet?.title ?? "");
@@ -65,7 +66,12 @@ export default function Home() {
         onChange: () => {},
         disabled: true,
       }
-    : { options: LANGUAGES, value: language, onChange: setLanguage, disabled: false };
+    : {
+        options: LANGUAGES,
+        value: language,
+        onChange: setLanguage,
+        disabled: false,
+      };
 
   const extensions = useMemo(
     () => [getLanguageExtension(language), editorFontTheme],
@@ -75,30 +81,40 @@ export default function Home() {
   const handleSave = async () => {
     if (!title.trim())
       return toast.error(
-        type === "code" ? "Give your snippet a title" : "Give your note a title",
+        type === "code"
+          ? "Give your snippet a title"
+          : "Give your note a title",
       );
     if (!code.trim())
-      return toast.error(type === "code" ? "Snippet can't be empty" : "Note can't be empty");
+      return toast.error(
+        type === "code" ? "Snippet can't be empty" : "Note can't be empty",
+      );
 
     setSaving(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 300));
 
       if (isEditMode) {
-        const updated = updateSnippet(editingSnippet.id, {
+        updateSnippet(editingSnippet.id, {
           title,
           language: isNotes ? "notes" : language,
           code,
           type,
         });
+
         toast.success(type === "code" ? "Snippet updated" : "Note updated");
-        navigate(`/snippet/${updated.id}`);
       } else {
-        createSnippet({ title, language: isNotes ? "notes" : language, code, type });
+        createSnippet({
+          title,
+          language: isNotes ? "notes" : language,
+          code,
+          type,
+        });
+
         toast.success(type === "code" ? "Snippet saved" : "Note saved");
-        setTitle("");
-        setCode("");
       }
+
+      navigate("/snippets", { replace: true });
     } catch {
       toast.error("Something went wrong");
     } finally {
@@ -131,7 +147,11 @@ export default function Home() {
     <div className="max-w-5xl mx-auto">
       {/* Type toggle + title + language row */}
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
-        <SegmentedToggle options={CONTENT_TYPES} value={type} onChange={setType} />
+        <SegmentedToggle
+          options={CONTENT_TYPES}
+          value={type}
+          onChange={setType}
+        />
 
         <input
           type="text"
@@ -172,11 +192,12 @@ export default function Home() {
 
             <button
               onClick={handleConvert}
-              aria-label="Convert to PDF"
-              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text)]
-                         hover:bg-[var(--surface)] transition-all duration-200 active:scale-90"
+              className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-[13px] font-medium *
+              border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--surface-2)] 
+              transition-all duration-200 active:scale-95"
             >
               <FileDown size={14} />
+              Export PDF
             </button>
 
             <button

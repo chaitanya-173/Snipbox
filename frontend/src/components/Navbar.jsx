@@ -18,7 +18,7 @@ export default function Navbar() {
   useEffect(() => {
     const active =
       navLinks.find(({ to, end }) =>
-        end ? location.pathname === to : location.pathname.startsWith(to)
+        end ? location.pathname === to : location.pathname.startsWith(to),
       ) ?? navLinks[0];
 
     const el = linkRefs.current[active.to];
@@ -42,12 +42,13 @@ export default function Navbar() {
         {/* Logo */}
         <NavLink to="/" className="flex items-center gap-1.5 shrink-0 pl-1">
           <Code2
-            size={19}
-            strokeWidth={2.25}
+            size={22}
+            strokeWidth={2.4}
             className="text-[var(--primary)]"
           />
-          <span className="font-semibold text-[14px] tracking-tight text-[var(--text)]">
-            SnipBox
+          <span className="text-[17px] font-bold tracking-tight">
+            <span className="text-[var(--text)]">Snip</span>
+            <span className="text-[var(--primary)]">Box</span>
           </span>
         </NavLink>
 

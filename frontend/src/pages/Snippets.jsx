@@ -72,24 +72,6 @@ export default function Snippets() {
     }
   };
 
-  const handleShare = async (snippet) => {
-    const url = `${window.location.origin}/snippet/${snippet.id}`;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: snippet.title, url });
-      } catch {
-        // user closed the native share sheet — no error needed
-      }
-    } else {
-      try {
-        await navigator.clipboard.writeText(url);
-        toast.success("Link copied!");
-      } catch {
-        toast.error("Couldn't copy link");
-      }
-    }
-  };
-
   const handleConvert = (snippet) => {
     requestPrint(snippet);
   };
@@ -140,7 +122,7 @@ export default function Snippets() {
 
       {/* Grid / Empty state */}
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center text-center py-24 px-6 rounded-2xl border border-dashed border-[var(--border)]">
+        <div className="flex flex-col items-center justify-center text-center py-24 px-6 rounded-xl border border-dashed border-[var(--border)]">
           {isNotesView ? (
             <StickyNote size={32} className="text-[var(--text-muted)] mb-3" />
           ) : (
@@ -179,7 +161,6 @@ export default function Snippets() {
               snippet={snippet}
               onEdit={handleEdit}
               onDelete={setPendingDelete}
-              onShare={handleShare}
               onCopy={handleCopy}
               onConvert={handleConvert}
             />

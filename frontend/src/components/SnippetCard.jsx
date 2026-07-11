@@ -1,4 +1,4 @@
-import { Pencil, Trash2, Share2, Copy, FileDown, Calendar } from "lucide-react";
+import { Pencil, Trash2, Copy, FileDown, Calendar } from "lucide-react";
 import IconButton from "./IconButton";
 import { highlightCode } from "../utils/highlightCode";
 import { LANGUAGES } from "../utils/languages";
@@ -11,16 +11,25 @@ function formatDate(iso) {
   });
 }
 
-export default function SnippetCard({ snippet, onEdit, onDelete, onShare, onCopy, onConvert }) {
+export default function SnippetCard({
+  snippet,
+  onEdit,
+  onDelete,
+  onCopy,
+  onConvert,
+}) {
   const isNotes = snippet.type === "notes";
   const previewSource = snippet.code.split("\n").slice(0, 4).join("\n");
   const languageLabel = isNotes
     ? "NOTES"
-    : (LANGUAGES.find((l) => l.value === snippet.language)?.label ?? snippet.language).toUpperCase();
+    : (
+        LANGUAGES.find((l) => l.value === snippet.language)?.label ??
+        snippet.language
+      ).toUpperCase();
 
   return (
     <div
-      className="group flex flex-col gap-4 rounded-2xl border border-[var(--border)]
+      className="group flex flex-col gap-4 rounded-xl border border-[var(--border)]
                  bg-[var(--surface)] p-5 transition-all duration-300 ease-out
                  hover:-translate-y-1 hover:scale-[1.015]
                  hover:border-[var(--primary)]/40
@@ -28,16 +37,34 @@ export default function SnippetCard({ snippet, onEdit, onDelete, onShare, onCopy
     >
       {/* Title + actions */}
       <div className="flex items-start justify-between gap-3">
-        <h3 className="text-[17px] font-semibold text-[var(--text)] leading-snug line-clamp-1 pt-1">
+        <h3
+          title={snippet.title}
+          className="flex-1 min-w-0 truncate text-[17px] font-semibold text-[var(--text)] leading-snug pt-1"
+        >
           {snippet.title}
         </h3>
 
         <div className="flex items-center gap-1.5 shrink-0">
-          <IconButton icon={Pencil} label="Edit" onClick={() => onEdit(snippet)} />
-          <IconButton icon={Share2} label="Share" onClick={() => onShare(snippet)} />
-          <IconButton icon={Copy} label="Copy" onClick={() => onCopy(snippet)} />
-          <IconButton icon={FileDown} label="Convert to PDF" onClick={() => onConvert(snippet)} />
-          <IconButton icon={Trash2} label="Delete" onClick={() => onDelete(snippet)} />
+          <IconButton
+            icon={Pencil}
+            label="Edit"
+            onClick={() => onEdit(snippet)}
+          />
+          <IconButton
+            icon={Copy}
+            label="Copy"
+            onClick={() => onCopy(snippet)}
+          />
+          <IconButton
+            icon={FileDown}
+            label="Export PDF"
+            onClick={() => onConvert(snippet)}
+          />
+          <IconButton
+            icon={Trash2}
+            label="Delete"
+            onClick={() => onDelete(snippet)}
+          />
         </div>
       </div>
 
@@ -50,7 +77,9 @@ export default function SnippetCard({ snippet, onEdit, onDelete, onShare, onCopy
         <pre className="snipbox-code text-[12.5px] leading-relaxed overflow-hidden max-h-[6.5rem] rounded-xl bg-[var(--surface-2)]/50 px-3.5 py-3 m-0">
           <code
             dangerouslySetInnerHTML={{
-              __html: highlightCode(previewSource, snippet.language) || "// empty snippet",
+              __html:
+                highlightCode(previewSource, snippet.language) ||
+                "// empty snippet",
             }}
           />
         </pre>
