@@ -12,8 +12,6 @@ import { requireAuth } from "../middleware/authMiddleware.js";
 
 const router = Router();
 
-// Every snippet route requires a valid session — applied once here
-// instead of repeating requireAuth on each route below.
 router.use(requireAuth);
 
 router.get("/", getSnippets);
