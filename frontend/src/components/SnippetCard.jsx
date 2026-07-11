@@ -36,7 +36,7 @@ export default function SnippetCard({ snippet, onEdit, onDelete, onShare, onCopy
           <IconButton icon={Pencil} label="Edit" onClick={() => onEdit(snippet)} />
           <IconButton icon={Share2} label="Share" onClick={() => onShare(snippet)} />
           <IconButton icon={Copy} label="Copy" onClick={() => onCopy(snippet)} />
-          <IconButton icon={FileDown} label="Convert" onClick={() => onConvert(snippet)} />
+          <IconButton icon={FileDown} label="Convert to PDF" onClick={() => onConvert(snippet)} />
           <IconButton icon={Trash2} label="Delete" onClick={() => onDelete(snippet)} />
         </div>
       </div>

@@ -1,0 +1,87 @@
+/* Hide printable content during normal app usage */
+.print-area {
+  display: none;
+}
+
+/* Print styles */
+@media print {
+  @page {
+    margin: 12mm;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+
+  html,
+  body {
+    background: #141414 !important;
+    color: #f5f5f5 !important;
+
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-area {
+    display: block !important;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+
+    background: #141414 !important;
+    color: #f5f5f5 !important;
+
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-code {
+    background: #1d1d1d !important;
+
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* Prism syntax colors */
+.print-code .token.comment {
+  color: #a3a3a3;
+  font-style: italic;
+}
+
+.print-code .token.keyword,
+.print-code .token.operator.keyword {
+  color: #14b8a6;
+}
+
+.print-code .token.string,
+.print-code .token.char {
+  color: #8fd19e;
+}
+
+.print-code .token.number,
+.print-code .token.boolean {
+  color: #f97316;
+}
+
+.print-code .token.function {
+  color: #7bb8e8;
+}
+
+.print-code .token.class-name,
+.print-code .token.builtin {
+  color: #e8b86d;
+}
+
+.print-code .token.punctuation {
+  color: #a3a3a3;
+}
+
+.print-code .token.operator {
+  color: #f5f5f5;
+}

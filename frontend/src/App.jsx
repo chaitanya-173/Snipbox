@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Snippets from "./pages/Snippets";
 import ViewSnippet from "./pages/ViewSnippet";
 import "./styles/snipboxPrism.css";
+import "./styles/print.css";
 
 function App() {
   return (

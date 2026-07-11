@@ -7,6 +7,7 @@ import SnippetCard from "../components/SnippetCard";
 import ConfirmDialog from "../components/ConfirmDialog";
 import LanguageSelect from "../components/LanguageSelect";
 import { getSnippets, deleteSnippet } from "../services/snippetService";
+import { usePrint } from "../context/PrintContext";
 
 const CONTENT_TYPES = [
   { value: "code", label: "Code" },
@@ -22,6 +23,7 @@ const SORT_OPTIONS = [
 
 export default function Snippets() {
   const navigate = useNavigate();
+  const { requestPrint } = usePrint();
 
   const [snippets, setSnippets] = useState([]);
   const [type, setType] = useState("code");
@@ -89,9 +91,7 @@ export default function Snippets() {
   };
 
   const handleConvert = (snippet) => {
-    // The PDF/Image export view will live on the View Snippet page.
-    // This flag lets that page auto-open the export flow once it's built.
-    navigate(`/snippet/${snippet.id}?export=true`);
+    requestPrint(snippet);
   };
 
   const confirmDelete = () => {

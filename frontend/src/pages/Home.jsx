@@ -3,8 +3,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import CodeMirror from "@uiw/react-codemirror";
 import { EditorView } from "@codemirror/view";
 import toast from "react-hot-toast";
-import { Save, RefreshCcw, Copy } from "lucide-react";
+import { Save, RefreshCcw, Copy, FileDown } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
+import { usePrint } from "../context/PrintContext";
 import LanguageSelect from "../components/LanguageSelect";
 import SegmentedToggle from "../components/SegmentedToggle";
 import NotesEditor from "../components/NotesEditor";
@@ -32,6 +33,7 @@ const editorFontTheme = EditorView.theme({
 
 export default function Home() {
   const { isDarkMode } = useTheme();
+  const { requestPrint } = usePrint();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -114,6 +116,17 @@ export default function Home() {
     }
   };
 
+  const handleConvert = () => {
+    if (!code.trim()) return toast.error("Nothing to convert yet");
+    requestPrint({
+      title: title.trim() || (isNotes ? "Untitled note" : "Untitled snippet"),
+      language: isNotes ? "notes" : language,
+      code,
+      type,
+      updatedAt: new Date().toISOString(),
+    });
+  };
+
   return (
     <div className="max-w-5xl mx-auto">
       {/* Type toggle + title + language row */}
@@ -155,6 +168,15 @@ export default function Home() {
                          hover:bg-[var(--surface)] transition-all duration-200 active:scale-90"
             >
               <Copy size={14} />
+            </button>
+
+            <button
+              onClick={handleConvert}
+              aria-label="Convert to PDF"
+              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text)]
+                         hover:bg-[var(--surface)] transition-all duration-200 active:scale-90"
+            >
+              <FileDown size={14} />
             </button>
 
             <button
