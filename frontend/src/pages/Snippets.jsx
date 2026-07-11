@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, FileCode2, StickyNote } from "lucide-react";
+import { Search, FileCode2, StickyNote, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import SegmentedToggle from "../components/SegmentedToggle";
 import SnippetCard from "../components/SnippetCard";
@@ -26,13 +26,29 @@ export default function Snippets() {
   const { requestPrint } = usePrint();
 
   const [snippets, setSnippets] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [type, setType] = useState("code");
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const [pendingDelete, setPendingDelete] = useState(null);
 
   useEffect(() => {
-    setSnippets(getSnippets());
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const data = await getSnippets();
+        if (!cancelled) setSnippets(data);
+      } catch (err) {
+        if (!cancelled) toast.error(err.message || "Couldn't load your snippets");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const filtered = useMemo(() => {
@@ -72,16 +88,39 @@ export default function Snippets() {
     }
   };
 
+  const handleShare = async (snippet) => {
+    const shareText = `${snippet.title}\n\n${snippet.code}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: snippet.title, text: shareText });
+      } catch {
+        // user closed the native share sheet — no error needed
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareText);
+        toast.success("Copied to share!");
+      } catch {
+        toast.error("Couldn't copy");
+      }
+    }
+  };
+
   const handleConvert = (snippet) => {
     requestPrint(snippet);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!pendingDelete) return;
-    deleteSnippet(pendingDelete.id);
-    setSnippets((prev) => prev.filter((s) => s.id !== pendingDelete.id));
-    toast.success(pendingDelete.type === "notes" ? "Note deleted" : "Snippet deleted");
-    setPendingDelete(null);
+    try {
+      await deleteSnippet(pendingDelete.id);
+      setSnippets((prev) => prev.filter((s) => s.id !== pendingDelete.id));
+      toast.success(pendingDelete.type === "notes" ? "Note deleted" : "Snippet deleted");
+    } catch (err) {
+      toast.error(err.message || "Couldn't delete");
+    } finally {
+      setPendingDelete(null);
+    }
   };
 
   const isNotesView = type === "notes";
@@ -120,9 +159,14 @@ export default function Snippets() {
         />
       </div>
 
-      {/* Grid / Empty state */}
-      {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center text-center py-24 px-6 rounded-xl border border-dashed border-[var(--border)]">
+      {/* Loading / Grid / Empty state */}
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-24 text-[var(--text-muted)]">
+          <Loader2 size={26} className="animate-spin mb-3" />
+          <p className="text-[13.5px]">Loading your {isNotesView ? "notes" : "snippets"}...</p>
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="flex flex-col items-center justify-center text-center py-24 px-6 rounded-2xl border border-dashed border-[var(--border)]">
           {isNotesView ? (
             <StickyNote size={32} className="text-[var(--text-muted)] mb-3" />
           ) : (
@@ -161,6 +205,7 @@ export default function Snippets() {
               snippet={snippet}
               onEdit={handleEdit}
               onDelete={setPendingDelete}
+              onShare={handleShare}
               onCopy={handleCopy}
               onConvert={handleConvert}
             />

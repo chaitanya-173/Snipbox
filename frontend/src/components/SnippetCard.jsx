@@ -89,7 +89,7 @@ export default function SnippetCard({
       <div className="flex items-center justify-between mt-auto pt-1">
         <div className="flex items-center gap-1.5 text-[12px] text-[var(--text-muted)]">
           <Calendar size={13} />
-          {formatDate(snippet.updatedAt)}
+          {formatDate(snippet.updated_at)}
         </div>
         <span
           className={`px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wide

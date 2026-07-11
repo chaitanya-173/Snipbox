@@ -92,31 +92,28 @@ export default function Home() {
 
     setSaving(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 300));
-
       if (isEditMode) {
-        updateSnippet(editingSnippet.id, {
+        await updateSnippet(editingSnippet.id, {
           title,
           language: isNotes ? "notes" : language,
           code,
           type,
         });
-
         toast.success(type === "code" ? "Snippet updated" : "Note updated");
+        navigate("/snippets");
       } else {
-        createSnippet({
+        await createSnippet({
           title,
           language: isNotes ? "notes" : language,
           code,
           type,
         });
-
         toast.success(type === "code" ? "Snippet saved" : "Note saved");
+        setTitle("");
+        setCode("");
       }
-
-      navigate("/snippets", { replace: true });
-    } catch {
-      toast.error("Something went wrong");
+    } catch (err) {
+      toast.error(err.message || "Something went wrong");
     } finally {
       setSaving(false);
     }

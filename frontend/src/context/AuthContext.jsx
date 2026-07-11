@@ -7,15 +7,15 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => getSession());
 
   const login = async (credentials) => {
-    const session = loginUser(credentials);
-    setUser(session);
-    return session;
+    const user = await loginUser(credentials);
+    setUser(user);
+    return user;
   };
 
   const register = async (details) => {
-    const session = registerUser(details);
-    setUser(session);
-    return session;
+    const user = await registerUser(details);
+    setUser(user);
+    return user;
   };
 
   const logout = () => {
