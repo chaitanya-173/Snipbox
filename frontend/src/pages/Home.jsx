@@ -40,7 +40,10 @@ export default function Home() {
   const editingSnippet = location.state?.snippet ?? null;
   const isEditMode = Boolean(editingSnippet);
 
-  const [type, setType] = useState(editingSnippet?.type ?? "code");
+  const initialType =
+    editingSnippet?.type ?? (editingSnippet?.language === "notes" ? "notes" : "code");
+
+  const [type, setType] = useState(initialType);
   const [title, setTitle] = useState(editingSnippet?.title ?? "");
   const [language, setLanguage] = useState(
     editingSnippet?.language ?? "javascript",

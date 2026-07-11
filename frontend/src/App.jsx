@@ -3,6 +3,7 @@ import Layout from "./layouts/Layout";
 import Home from "./pages/Home";
 import Snippets from "./pages/Snippets";
 import ViewSnippet from "./pages/ViewSnippet";
+import "./styles/snipboxPrism.css";
 
 function App() {
   return (

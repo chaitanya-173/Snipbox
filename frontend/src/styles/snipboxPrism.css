@@ -1,0 +1,60 @@
+/* Custom Prism token theme, built from SnipBox's CSS variables so card
+   previews match the CodeMirror editor instead of looking like a
+   different, generic syntax-highlighting theme. */
+
+.snipbox-code .token.comment,
+.snipbox-code .token.prolog,
+.snipbox-code .token.doctype,
+.snipbox-code .token.cdata {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.snipbox-code .token.keyword,
+.snipbox-code .token.operator.keyword {
+  color: var(--primary);
+}
+
+.snipbox-code .token.number,
+.snipbox-code .token.boolean {
+  color: var(--accent);
+}
+
+.snipbox-code .token.punctuation {
+  color: var(--text-muted);
+}
+
+.snipbox-code .token.operator {
+  color: var(--text);
+}
+
+.snipbox-code .token.plain-text,
+.snipbox-code .token.variable {
+  color: var(--text);
+}
+
+/* Light mode hues */
+.snipbox-code .token.string,
+.snipbox-code .token.char {
+  color: #1e7a46;
+}
+.snipbox-code .token.function {
+  color: #1d6fa8;
+}
+.snipbox-code .token.class-name,
+.snipbox-code .token.builtin {
+  color: #a5690e;
+}
+
+/* Dark mode hues */
+.dark .snipbox-code .token.string,
+.dark .snipbox-code .token.char {
+  color: #8fd19e;
+}
+.dark .snipbox-code .token.function {
+  color: #7bb8e8;
+}
+.dark .snipbox-code .token.class-name,
+.dark .snipbox-code .token.builtin {
+  color: #e8b86d;
+}
