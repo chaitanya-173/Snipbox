@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, Check } from "lucide-react";
 
-export default function LanguageSelect({ options, value, onChange }) {
+export default function LanguageSelect({ options, value, onChange, disabled = false }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
   const selected = options.find((o) => o.value === value);
@@ -18,11 +18,16 @@ export default function LanguageSelect({ options, value, onChange }) {
     <div ref={ref} className="relative w-full sm:w-48">
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between gap-2 px-4 py-2.5
+        onClick={() => !disabled && setOpen((o) => !o)}
+        disabled={disabled}
+        className={`w-full flex items-center justify-between gap-2 px-4 py-2.5
                    rounded-xl border border-[var(--border)] bg-[var(--surface)]
-                   text-[14px] text-[var(--text)] hover:border-[var(--primary)]/50
-                   transition-all duration-200"
+                   text-[14px] text-[var(--text)] transition-all duration-200
+                   ${
+                     disabled
+                       ? "opacity-50 cursor-not-allowed"
+                       : "hover:border-[var(--primary)]/50"
+                   }`}
       >
         <span>{selected?.label ?? "Select language"}</span>
         <ChevronDown

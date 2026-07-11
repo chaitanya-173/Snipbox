@@ -29,13 +29,14 @@ export function getSnippetById(id) {
   return readAll().find((s) => s.id === id) ?? null;
 }
 
-export function createSnippet({ title, language, code }) {
+export function createSnippet({ title, language, code, type = "code" }) {
   const now = new Date().toISOString();
   const newSnippet = {
     id: crypto.randomUUID(),
     title,
     language,
     code,
+    type,
     createdAt: now,
     updatedAt: now,
   };
@@ -43,10 +44,10 @@ export function createSnippet({ title, language, code }) {
   return newSnippet;
 }
 
-export function updateSnippet(id, { title, language, code }) {
+export function updateSnippet(id, { title, language, code, type = "code" }) {
   const updated = readAll().map((s) =>
     s.id === id
-      ? { ...s, title, language, code, updatedAt: new Date().toISOString() }
+      ? { ...s, title, language, code, type, updatedAt: new Date().toISOString() }
       : s
   );
   writeAll(updated);

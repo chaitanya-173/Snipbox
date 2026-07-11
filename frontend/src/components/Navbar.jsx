@@ -1,14 +1,34 @@
-import { NavLink } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import { Code2, Sun, Moon, LogIn } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 
 const navLinks = [
-  { to: "/", label: "Create" },
-  { to: "/snippets", label: "My Snippets" },
+  { to: "/", label: "Create", end: true },
+  { to: "/snippets", label: "My Snippets", end: false },
 ];
 
 export default function Navbar() {
   const { isDarkMode, toggleTheme } = useTheme();
+  const location = useLocation();
+  const trackRef = useRef(null);
+  const linkRefs = useRef({});
+  const [indicator, setIndicator] = useState({ left: 0, width: 0 });
+
+  useEffect(() => {
+    const active =
+      navLinks.find(({ to, end }) =>
+        end ? location.pathname === to : location.pathname.startsWith(to)
+      ) ?? navLinks[0];
+
+    const el = linkRefs.current[active.to];
+    const track = trackRef.current;
+    if (el && track) {
+      const elRect = el.getBoundingClientRect();
+      const trackRect = track.getBoundingClientRect();
+      setIndicator({ left: elRect.left - trackRect.left, width: elRect.width });
+    }
+  }, [location.pathname]);
 
   return (
     <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-3xl">
@@ -32,19 +52,28 @@ export default function Navbar() {
         </NavLink>
 
         {/* Nav links */}
-        <div className="flex items-center gap-0.5 p-1 rounded-full bg-[var(--surface-2)]/70">
-          {navLinks.map(({ to, label }) => (
+        <div
+          ref={trackRef}
+          className="relative flex items-center gap-0.5 p-1 rounded-full bg-[var(--surface-2)]/70"
+        >
+          <div
+            className="absolute top-1 bottom-1 rounded-full bg-[var(--primary)] shadow-sm
+                       transition-all duration-300 ease-out"
+            style={{ left: indicator.left, width: indicator.width }}
+          />
+          {navLinks.map(({ to, label, end }) => (
             <NavLink
               key={to}
+              ref={(el) => (linkRefs.current[to] = el)}
               to={to}
-              end={to === "/"}
+              end={end}
               className={({ isActive }) =>
-                `px-3 sm:px-4 py-1.5 rounded-full text-[13px] font-medium
-                 whitespace-nowrap transition-all duration-200
+                `relative z-10 px-3 sm:px-4 py-1.5 rounded-full text-[13px] font-medium
+                 whitespace-nowrap transition-colors duration-200
                  ${
                    isActive
-                     ? "bg-[var(--primary)] text-white shadow-sm"
-                     : "text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface)]"
+                     ? "text-white"
+                     : "text-[var(--text-muted)] hover:text-[var(--text)]"
                  }`
               }
             >
