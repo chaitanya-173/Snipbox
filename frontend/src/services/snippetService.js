@@ -3,6 +3,11 @@
 // (createSnippet, getSnippets, updateSnippet, deleteSnippet) — so when the
 // MySQL backend is ready, only the *inside* of these functions changes to
 // fetch() calls. Nothing in the pages/components needs to change.
+//
+// Snippets are scoped to the logged-in user (via authService's session),
+// same way the real backend will scope rows by user_id.
+
+import { getSession } from "./authService";
 
 const STORAGE_KEY = "snipbox_snippets";
 
@@ -19,20 +24,27 @@ function writeAll(snippets) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(snippets));
 }
 
+function currentUserId() {
+  return getSession()?.id ?? null;
+}
+
 export function getSnippets() {
-  return readAll().sort(
-    (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
-  );
+  const userId = currentUserId();
+  return readAll()
+    .filter((s) => s.userId === userId)
+    .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
 }
 
 export function getSnippetById(id) {
-  return readAll().find((s) => s.id === id) ?? null;
+  const userId = currentUserId();
+  return readAll().find((s) => s.id === id && s.userId === userId) ?? null;
 }
 
 export function createSnippet({ title, language, code, type = "code" }) {
   const now = new Date().toISOString();
   const newSnippet = {
     id: crypto.randomUUID(),
+    userId: currentUserId(),
     title,
     language,
     code,
@@ -45,8 +57,9 @@ export function createSnippet({ title, language, code, type = "code" }) {
 }
 
 export function updateSnippet(id, { title, language, code, type = "code" }) {
+  const userId = currentUserId();
   const updated = readAll().map((s) =>
-    s.id === id
+    s.id === id && s.userId === userId
       ? { ...s, title, language, code, type, updatedAt: new Date().toISOString() }
       : s
   );
@@ -55,5 +68,6 @@ export function updateSnippet(id, { title, language, code, type = "code" }) {
 }
 
 export function deleteSnippet(id) {
-  writeAll(readAll().filter((s) => s.id !== id));
+  const userId = currentUserId();
+  writeAll(readAll().filter((s) => !(s.id === id && s.userId === userId)));
 }

@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
-import { Code2, Sun, Moon, LogIn } from "lucide-react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Code2, Sun, Moon, LogOut } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
+import { useAuth } from "../context/AuthContext";
+import Tooltip from "./Tooltip";
 
 const navLinks = [
   { to: "/", label: "Create", end: true },
@@ -10,10 +12,17 @@ const navLinks = [
 
 export default function Navbar() {
   const { isDarkMode, toggleTheme } = useTheme();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const location = useLocation();
   const trackRef = useRef(null);
   const linkRefs = useRef({});
   const [indicator, setIndicator] = useState({ left: 0, width: 0 });
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   useEffect(() => {
     const active =
@@ -85,23 +94,30 @@ export default function Navbar() {
 
         {/* Right actions */}
         <div className="flex items-center gap-1.5 shrink-0 pr-0.5">
-          <button
-            onClick={toggleTheme}
-            aria-label="Toggle theme"
-            className="p-2 rounded-full text-[var(--text-muted)] hover:text-[var(--text)]
-                       hover:bg-[var(--surface-2)] transition-all duration-200 active:scale-90"
+          <Tooltip
+            label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
           >
-            {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
-          </button>
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+              className="p-2 rounded-full text-[var(--text-muted)] hover:text-[var(--text)]
+                         hover:bg-[var(--surface-2)] transition-all duration-200 active:scale-90"
+            >
+              {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+          </Tooltip>
 
-          <button
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[13px] font-medium
-                       bg-[var(--primary)] text-white hover:opacity-90
-                       transition-all duration-200 active:scale-95"
-          >
-            <LogIn size={13} />
-            <span className="hidden xs:inline">Login</span>
-          </button>
+          <Tooltip label="Log out">
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 px-5 py-2 rounded-full text-[13px] font-medium
+                         bg-[var(--primary)] text-white hover:opacity-90
+                         transition-all duration-200 active:scale-95"
+            >
+              <LogOut size={13} />
+              <span className="hidden xs:inline">Logout</span>
+            </button>
+          </Tooltip>
         </div>
       </nav>
     </header>
