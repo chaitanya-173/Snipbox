@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Search, FileCode2, StickyNote, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -8,6 +8,7 @@ import ConfirmDialog from "../components/ConfirmDialog";
 import LanguageSelect from "../components/LanguageSelect";
 import { getSnippets, deleteSnippet } from "../services/snippetService";
 import { usePrint } from "../context/PrintContext";
+import { useShortcut } from "../hooks/useShortcut";
 
 const CONTENT_TYPES = [
   { value: "code", label: "Code" },
@@ -125,6 +126,12 @@ export default function Snippets() {
   };
 
   const isNotesView = type === "notes";
+  const searchRef = useRef(null);
+
+  useShortcut("mod+k", () => searchRef.current?.focus(), {
+    description: "Focus search",
+    scope: "My Snippets",
+  });
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -138,10 +145,13 @@ export default function Snippets() {
             className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
           />
           <input
+            ref={searchRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={isNotesView ? "Search notes..." : "Search snippets..."}
+            placeholder={
+              isNotesView ? "Search notes... (⌘K)" : "Search snippets... (⌘K)"
+            }
             className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-[var(--border)]
                        bg-[var(--surface)] text-[14px] text-[var(--text)]
                        placeholder:text-[var(--text-muted)]
@@ -167,7 +177,7 @@ export default function Snippets() {
           <p className="text-[13.5px]">Loading your {isNotesView ? "notes" : "snippets"}...</p>
         </div>
       ) : filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center text-center py-24 px-6 rounded-xl border border-dashed border-[var(--border)]">
+        <div className="flex flex-col items-center justify-center text-center py-24 px-6 rounded-2xl border border-dashed border-[var(--border)]">
           {isNotesView ? (
             <StickyNote size={32} className="text-[var(--text-muted)] mb-3" />
           ) : (

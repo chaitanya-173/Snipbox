@@ -27,13 +27,31 @@ export default function SnippetCard({
         snippet.language
       ).toUpperCase();
 
+  // Clicking anywhere on the card opens it (same place Edit goes to, since
+  // Home doubles as the view/edit screen). Action icons stop propagation
+  // so Delete/Copy/Export don't also trigger this.
+  const handleCardActivate = () => onEdit(snippet);
+  const handleCardKeyDown = (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleCardActivate();
+    }
+  };
+
   return (
     <div
+      role="button"
+      tabIndex={0}
+      onClick={handleCardActivate}
+      onKeyDown={handleCardKeyDown}
+      aria-label={`Open ${snippet.title}`}
       className="group flex flex-col gap-4 rounded-xl border border-[var(--border)]
-                 bg-[var(--surface)] p-5 transition-all duration-300 ease-out
+                 bg-[var(--surface)] p-5 transition-all duration-300 ease-out cursor-pointer
                  hover:-translate-y-1 hover:scale-[1.015]
                  hover:border-[var(--primary)]/40
-                 hover:shadow-[0_16px_40px_-16px_rgba(0,0,0,0.35)]"
+                 hover:shadow-[0_16px_40px_-16px_rgba(0,0,0,0.35)]
+                 focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--primary)]/20
+                 focus-visible:border-[var(--primary)]/50"
     >
       {/* Title + actions */}
       <div className="flex items-start justify-between gap-3">
@@ -44,7 +62,10 @@ export default function SnippetCard({
           {snippet.title}
         </h3>
 
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div
+          className="flex items-center gap-1.5 shrink-0"
+          onClick={(e) => e.stopPropagation()}
+        >
           <IconButton
             icon={Pencil}
             label="Edit"
@@ -74,7 +95,7 @@ export default function SnippetCard({
           {snippet.code.trim() || "Empty note"}
         </p>
       ) : (
-        <pre className="snipbox-code text-[12.5px] leading-relaxed overflow-hidden max-h-[6.5rem] rounded-xl bg-[var(--surface-2)]/50 py-3 m-0">
+        <pre className="snipbox-code text-[12.5px] leading-relaxed overflow-hidden max-h-[6.5rem] rounded-xl bg-[var(--surface-2)]/50 pl-2.5 pr-3.5 py-3 m-0">
           <code
             dangerouslySetInnerHTML={{
               __html:

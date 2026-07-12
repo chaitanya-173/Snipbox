@@ -1,138 +1,171 @@
-# Code Snippet Manager
+# </> SnipBox
 
-A modern, full-stack application for managing and organizing code snippets with a beautiful dark/light mode interface.
+A premium, minimal personal code snippet & notes manager — built to feel like a real developer tool, not another CRUD project.
 
-## 🌟 Features
+Save, organize, edit, search, and export reusable code snippets (and quick notes) with syntax highlighting, a Carbon-style PDF export, full keyboard-shortcut navigation, and secure JWT authentication.
 
-- **Create & Edit Snippets**: Easily create and edit code snippets with syntax highlighting
-- **Dark/Light Mode**: Toggle between dark and light themes for comfortable coding
-- **Copy to Clipboard**: One-click copy functionality for quick code sharing
-- **Search Functionality**: Find snippets quickly with the search feature
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
-- **Real-time Updates**: Instant feedback on all operations
-- **Persistent Drafts**: Your work is saved even when navigating between pages
+---
 
-## 🛠️ Tech Stack
+## ✨ Features
 
-### Frontend
+- **JWT Authentication** — register/login with bcrypt-hashed passwords, protected routes, guest-only auth pages
+- **Code + Notes in one place** — a sliding toggle switches the entire app between snippet mode and lightweight note mode
+- **Custom code editor** — CodeMirror 6 with a hand-built theme (no default themes), auto-growing height, 8 languages
+- **Syntax-highlighted previews** — PrismJS-powered cards on the snippets grid, themed to match the app's own CSS variables
+- **Search + sort** — live search by title/content, sort by newest/oldest/name
+- **Export to PDF** — one click renders a clean, dark, line-numbered printable layout via the browser's native print dialog
+- **Full keyboard-shortcut system** — `⌘S` to save, `⌘K` to search, `G H`/`G S` to navigate, `?` for a full shortcuts reference, arrow-key navigation in toggles and dropdowns — all route-aware and safe while typing
+- **Dark / light themes** — CSS-variable driven, persisted, no flash on load
+- **Fully responsive** — floating glass navbar (with a collapsible overflow menu on mobile), adaptive grid, mobile-first forms
 
-- React.js
-- Redux Toolkit for state management
-- Tailwind CSS for styling
-- React Router for navigation
-- React Hot Toast for notifications
-- Lucide React for icons
+## 🛠 Tech Stack
 
-### Backend
+**Frontend**
+- React (Vite) + React Router DOM
+- Tailwind CSS (custom design tokens via CSS variables — no UI kit)
+- Context API for theme, auth, print, and shortcuts state (no Redux)
+- CodeMirror 6 (`@uiw/react-codemirror`) for editing
+- PrismJS for read-only syntax highlighting
+- React Hot Toast
 
-- Node.js
-- Express.js
-- MongoDB with Mongoose
-- RESTful API architecture
+**Backend**
+- Node.js + Express
+- MySQL (raw SQL via `mysql2/promise` — no ORM)
+- JWT (`jsonwebtoken`) for stateless auth
+- `bcryptjs` for password hashing
+- `express-validator` for request validation
+
+**Deployment**
+- Frontend → [Vercel](https://vercel.com)
+- Backend → [Render](https://render.com)
+- Database → [Aiven](https://aiven.io) (managed MySQL, free tier)
+
+## 📁 Project Structure
+
+```
+SnipBox/
+├── frontend/
+│   └── src/
+│       ├── components/     # Navbar, SnippetCard, IconButton, ConfirmDialog, ShortcutsHelpModal...
+│       ├── context/        # ThemeContext, AuthContext, PrintContext, ShortcutsContext
+│       ├── hooks/          # useShortcut, useFocusTrap
+│       ├── layouts/        # Layout (app shell), AuthLayout (login/register shell)
+│       ├── pages/          # Home, Snippets, Login, Register, NotFound
+│       ├── routes/         # ProtectedRoute, GuestRoute
+│       ├── services/       # authService, snippetService (API calls)
+│       ├── utils/          # apiClient, authStorage, languages, theming, platform
+│       └── styles/         # Prism + print stylesheets
+│
+└── backend/
+    └── src/
+        ├── config/         # MySQL connection pool
+        ├── controllers/    # auth + snippet business logic
+        ├── models/         # raw SQL queries
+        ├── routes/         # Express routers
+        ├── validators/     # express-validator rule sets
+        └── middleware/     # JWT auth guard, validation, error handling
+```
 
 ## 🚀 Getting Started
 
 ### Prerequisites
+- Node.js 18+
+- A MySQL database (local, or a free instance from [Aiven](https://aiven.io))
 
-- Node.js (v14 or higher)
-- MongoDB
-- npm or yarn
-
-### Installation
-
-1. Clone the repository
+### 1. Clone & install
 
 ```bash
-git clone https://github.com/yourusername/code-snippet-manager.git
-cd code-snippet-manager
+git clone https://github.com/<your-username>/snipbox.git
+cd snipbox
 ```
 
-2. Install backend dependencies
-
+**Backend**
 ```bash
 cd backend
 npm install
+cp .env.example .env   # then fill in your DB + JWT values
 ```
 
-3. Install frontend dependencies
-
-```bash
-cd ../frontend
-npm install
-```
-
-4. Create a `.env` file in the backend directory
-
-```env
-PORT=5000
-MONGODB_URI=your_mongodb_uri
-```
-
-### Running the Application
-
-1. Start the backend server
-
-```bash
-cd backend
-npm start
-```
-
-2. Start the frontend development server
-
+**Frontend**
 ```bash
 cd frontend
-npm run dev
+npm install
+cp .env.example .env   # points to your backend's URL
 ```
 
-3. Open your browser and navigate to `http://localhost:5173`
+### 2. Set up the database
 
-## 📝 API Endpoints
+Run the schema once against your MySQL instance:
 
-### Snippets
+```bash
+mysql -u <user> -p < backend/sql/schema.sql
+```
 
-- `GET /api/snippets` - Get all snippets
-- `GET /api/snippets/:id` - Get a specific snippet
-- `POST /api/snippets` - Create a new snippet
-- `PUT /api/snippets/:id` - Update a snippet
-- `DELETE /api/snippets/:id` - Delete a snippet
+### 3. Run it
 
-## 🎨 Features in Detail
+```bash
+# backend/
+npm run dev       # http://localhost:5000
 
-### Snippet Management
+# frontend/ (in a separate terminal)
+npm run dev       # http://localhost:5173
+```
 
-- Create new code snippets with title and content
-- Edit existing snippets
-- Delete snippets
-- View all snippets in a list
-- Search through snippets
+## 🔐 Environment Variables
 
-### User Experience
+**`backend/.env`**
+```
+PORT=5000
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=your_mysql_password
+DB_NAME=snipbox
+JWT_SECRET=a_long_random_string
+CLIENT_URL=http://localhost:5173
+```
 
-- Dark/Light mode toggle
-- Responsive design for all screen sizes
-- Toast notifications for user feedback
-- Copy to clipboard functionality
-- Persistent drafts during navigation
+**`frontend/.env`**
+```
+VITE_API_URL=http://localhost:5000/api
+```
 
-## 🤝 Contributing
+## ⌨️ Keyboard Shortcuts
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Press **`?`** anywhere in the app for the full, always-up-to-date list. Highlights:
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+| Shortcut | Action |
+|---|---|
+| `⌘/Ctrl + S` | Save / update the current snippet or note |
+| `⌘/Ctrl + K` | Focus the search bar on My Snippets |
+| `⌘/Ctrl + /` | Toggle dark / light theme |
+| `G` then `H` | Go to Create |
+| `G` then `S` | Go to My Snippets |
+| `Esc` | Close the open dialog |
+| `←` / `→` | Switch between Code / Notes |
+| `↑` / `↓` / `Enter` | Navigate an open dropdown |
+
+Shortcuts are registered per-page (so they only exist where they make sense) and never fire while typing in a text field, except safe combos like `⌘S` and `Esc`.
+
+## 📡 API Reference
+
+| Method | Route | Auth | Description |
+|---|---|---|---|
+| POST | `/api/auth/register` | – | Create an account |
+| POST | `/api/auth/login` | – | Log in, returns a JWT |
+| GET | `/api/auth/me` | ✅ | Get the current user |
+| GET | `/api/snippets` | ✅ | List the logged-in user's snippets/notes |
+| GET | `/api/snippets/:id` | ✅ | Get a single snippet/note |
+| POST | `/api/snippets` | ✅ | Create a snippet/note |
+| PUT | `/api/snippets/:id` | ✅ | Update a snippet/note |
+| DELETE | `/api/snippets/:id` | ✅ | Delete a snippet/note |
+
+All protected routes expect `Authorization: Bearer <token>`. Every snippet query is scoped to `user_id` at the database level — one user can never see another's data.
+
+## 🎨 Design Philosophy
+
+SnipBox intentionally does **less**, not more. No feature was added without a reason — the goal was a polished, focused tool with consistent design language, not a feature-heavy dashboard. Inspired by the visual language of Linear, Vercel, and Raycast.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👥 Authors
-
-- Chaitanya Chaudhary - Initial work
-
-## 🙏 Acknowledgments
-
-- Thanks to all contributors who have helped shape this project
-- Inspired by the need for a simple and efficient code snippet management solution
+MIT

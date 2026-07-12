@@ -7,7 +7,7 @@ export default function IconButton({ icon: Icon, label, onClick, variant = "defa
         type="button"
         onClick={onClick}
         aria-label={label}
-        className={`p-2 rounded-lg border border-[var(--border)] bg-[var(--surface)]
+        className={`p-1.5 sm:p-2 rounded-lg border border-[var(--border)] bg-[var(--surface)]
                    transition-all duration-200 active:scale-90
                    ${
                      variant === "danger"

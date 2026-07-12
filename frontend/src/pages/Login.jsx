@@ -40,6 +40,7 @@ export default function Login() {
           />
           <input
             type="email"
+            autoFocus
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"

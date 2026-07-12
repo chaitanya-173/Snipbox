@@ -1,3 +1,7 @@
+import { useEffect, useRef } from "react";
+import { useShortcut } from "../hooks/useShortcut";
+import { useFocusTrap } from "../hooks/useFocusTrap";
+
 export default function ConfirmDialog({
   open,
   title,
@@ -7,6 +11,22 @@ export default function ConfirmDialog({
   onConfirm,
   onCancel,
 }) {
+  const containerRef = useRef(null);
+  const confirmButtonRef = useRef(null);
+
+  useFocusTrap(containerRef, open);
+  useShortcut("escape", onCancel, {
+    enabled: open,
+    scope: "Modal",
+    description: "Close this dialog",
+  });
+
+  // Focus the confirm button on open — native Enter/Space then "just works"
+  // as confirm, with no risk of double-firing from a separate global handler.
+  useEffect(() => {
+    if (open) confirmButtonRef.current?.focus();
+  }, [open]);
+
   if (!open) return null;
 
   return (
@@ -16,7 +36,8 @@ export default function ConfirmDialog({
         onClick={onCancel}
       />
       <div
-        className="relative w-full max-w-sm rounded-xl border border-[var(--border)]
+        ref={containerRef}
+        className="relative w-full max-w-sm rounded-2xl border border-[var(--border)]
                    bg-[var(--surface)] p-6 shadow-[0_24px_60px_-15px_rgba(0,0,0,0.5)]"
       >
         <h3 className="text-[17px] font-semibold text-[var(--text)]">{title}</h3>
@@ -32,6 +53,7 @@ export default function ConfirmDialog({
             Cancel
           </button>
           <button
+            ref={confirmButtonRef}
             onClick={onConfirm}
             className={`px-4 py-2 rounded-xl text-[13.5px] font-medium text-white
                        hover:opacity-90 transition-all duration-200

@@ -6,6 +6,8 @@ import toast from "react-hot-toast";
 import { Save, RefreshCcw, Copy, FileDown } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { usePrint } from "../context/PrintContext";
+import { useShortcut } from "../hooks/useShortcut";
+import Tooltip from "../components/Tooltip";
 import LanguageSelect from "../components/LanguageSelect";
 import SegmentedToggle from "../components/SegmentedToggle";
 import NotesEditor from "../components/NotesEditor";
@@ -149,6 +151,13 @@ export default function Home() {
     });
   };
 
+  // Works even while typing inside the title field or the code editor —
+  // Ctrl/Cmd+S never inserts a character, so it's safe there.
+  useShortcut("mod+s", handleSave, {
+    description: isEditMode ? "Update" : "Save",
+    scope: "Editor",
+  });
+
   return (
     <div className="max-w-5xl mx-auto">
       {/* Type toggle + title + language row */}
@@ -187,39 +196,45 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-1.5">
-            <button
-              onClick={handleCopy}
-              aria-label="Copy code"
-              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text)]
-                         hover:bg-[var(--surface)] transition-all duration-200 active:scale-90"
-            >
-              <Copy size={14} />
-            </button>
+            <Tooltip label="Copy code">
+              <button
+                onClick={handleCopy}
+                aria-label="Copy code"
+                className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text)]
+                           hover:bg-[var(--surface)] transition-all duration-200 active:scale-90"
+              >
+                <Copy size={14} />
+              </button>
+            </Tooltip>
 
-            <button
-              onClick={handleConvert}
-              className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-[13px] font-medium *
-              border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--surface-2)] 
-              transition-all duration-200 active:scale-95"
-            >
-              <FileDown size={14} />
-              Export PDF
-            </button>
+            <Tooltip label="Export to PDF">
+              <button
+                onClick={handleConvert}
+                className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-[13px] font-medium
+                           border border-[var(--border)] bg-[var(--surface)] text-[var(--text)]
+                           hover:bg-[var(--surface-2)] transition-all duration-200 active:scale-95"
+              >
+                <FileDown size={14} />
+                Export PDF
+              </button>
+            </Tooltip>
 
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-[13px] font-medium
-                         bg-[var(--primary)] text-white hover:opacity-90
-                         disabled:opacity-60 transition-all duration-200 active:scale-95"
-            >
-              {saving ? (
-                <RefreshCcw size={13} className="animate-spin" />
-              ) : (
-                <Save size={13} />
-              )}
-              {isEditMode ? "Update" : "Save"}
-            </button>
+            <Tooltip label={`${isEditMode ? "Update" : "Save"} (⌘S)`}>
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-[13px] font-medium
+                           bg-[var(--primary)] text-white hover:opacity-90
+                           disabled:opacity-60 transition-all duration-200 active:scale-95"
+              >
+                {saving ? (
+                  <RefreshCcw size={13} className="animate-spin" />
+                ) : (
+                  <Save size={13} />
+                )}
+                {isEditMode ? "Update" : "Save"}
+              </button>
+            </Tooltip>
           </div>
         </div>
 

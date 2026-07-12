@@ -8,6 +8,8 @@ import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import GuestRoute from "./routes/GuestRoute";
+import GlobalShortcuts from "./components/GlobalShortcuts";
+import ShortcutsHelpModal from "./components/ShortcutsHelpModal";
 import "./styles/snipboxPrism.css";
 import "./styles/print.css";
 
@@ -25,6 +27,9 @@ function App() {
           },
         }}
       />
+
+      <GlobalShortcuts />
+      <ShortcutsHelpModal />
 
       <Routes>
         {/* Guest-only — logged-in users get bounced back to "/" */}
