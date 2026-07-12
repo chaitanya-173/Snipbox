@@ -185,7 +185,7 @@ export default function Home() {
 
       <div
         className="rounded-xl border border-[var(--border)] bg-[var(--surface)]
-                   overflow-hidden shadow-[0_8px_32px_-12px_rgba(0,0,0,0.3)]"
+                   overflow-visible shadow-[0_8px_32px_-12px_rgba(0,0,0,0.3)]"
       >
         <div className="flex items-center justify-between px-5 py-2 border-b border-[var(--border)] bg-[var(--surface-2)]/50">
           <div className="flex items-center gap-2.5">
