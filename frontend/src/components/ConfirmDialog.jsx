@@ -1,4 +1,12 @@
-export default function ConfirmDialog({ open, title, description, onConfirm, onCancel }) {
+export default function ConfirmDialog({
+  open,
+  title,
+  description,
+  confirmLabel = "Delete",
+  variant = "danger",
+  onConfirm,
+  onCancel,
+}) {
   if (!open) return null;
 
   return (
@@ -8,7 +16,7 @@ export default function ConfirmDialog({ open, title, description, onConfirm, onC
         onClick={onCancel}
       />
       <div
-        className="relative w-full max-w-sm rounded-2xl border border-[var(--border)]
+        className="relative w-full max-w-sm rounded-xl border border-[var(--border)]
                    bg-[var(--surface)] p-6 shadow-[0_24px_60px_-15px_rgba(0,0,0,0.5)]"
       >
         <h3 className="text-[17px] font-semibold text-[var(--text)]">{title}</h3>
@@ -25,10 +33,11 @@ export default function ConfirmDialog({ open, title, description, onConfirm, onC
           </button>
           <button
             onClick={onConfirm}
-            className="px-4 py-2 rounded-xl text-[13.5px] font-medium text-white
-                       bg-[var(--danger)] hover:opacity-90 transition-all duration-200"
+            className={`px-4 py-2 rounded-xl text-[13.5px] font-medium text-white
+                       hover:opacity-90 transition-all duration-200
+                       ${variant === "danger" ? "bg-[var(--danger)]" : "bg-[var(--primary)]"}`}
           >
-            Delete
+            {confirmLabel}
           </button>
         </div>
       </div>

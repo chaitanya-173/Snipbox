@@ -1,5 +1,4 @@
 import { Outlet } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import { PrintProvider } from "../context/PrintContext";
 
@@ -20,18 +19,6 @@ export default function Layout() {
             <Outlet />
           </div>
         </main>
-
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 2500,
-            style: {
-              background: "var(--surface)",
-              color: "var(--text)",
-              border: "1px solid var(--border)",
-            },
-          }}
-        />
       </div>
     </PrintProvider>
   );

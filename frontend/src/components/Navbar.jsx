@@ -4,6 +4,7 @@ import { Code2, Sun, Moon, LogOut } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 import Tooltip from "./Tooltip";
+import ConfirmDialog from "./ConfirmDialog";
 
 const navLinks = [
   { to: "/", label: "Create", end: true },
@@ -12,15 +13,17 @@ const navLinks = [
 
 export default function Navbar() {
   const { isDarkMode, toggleTheme } = useTheme();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const trackRef = useRef(null);
   const linkRefs = useRef({});
   const [indicator, setIndicator] = useState({ left: 0, width: 0 });
+  const [confirmingLogout, setConfirmingLogout] = useState(false);
 
   const handleLogout = () => {
     logout();
+    setConfirmingLogout(false);
     navigate("/");
   };
 
@@ -107,9 +110,9 @@ export default function Navbar() {
             </button>
           </Tooltip>
 
-          <Tooltip label="Log out">
+          <Tooltip label={user?.email ?? "Log out"}>
             <button
-              onClick={handleLogout}
+              onClick={() => setConfirmingLogout(true)}
               className="flex items-center gap-1.5 px-5 py-2 rounded-full text-[13px] font-medium
                          bg-[var(--primary)] text-white hover:opacity-90
                          transition-all duration-200 active:scale-95"
@@ -120,6 +123,16 @@ export default function Navbar() {
           </Tooltip>
         </div>
       </nav>
+
+      <ConfirmDialog
+        open={confirmingLogout}
+        title="Log out?"
+        description="You'll need to log back in to access your snippets and notes."
+        confirmLabel="Log out"
+        variant="primary"
+        onConfirm={handleLogout}
+        onCancel={() => setConfirmingLogout(false)}
+      />
     </header>
   );
 }

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Search, FileCode2, StickyNote, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import SegmentedToggle from "../components/SegmentedToggle";
@@ -23,11 +23,12 @@ const SORT_OPTIONS = [
 
 export default function Snippets() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { requestPrint } = usePrint();
 
   const [snippets, setSnippets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [type, setType] = useState("code");
+  const [type, setType] = useState(location.state?.type ?? "code");
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const [pendingDelete, setPendingDelete] = useState(null);
@@ -166,7 +167,7 @@ export default function Snippets() {
           <p className="text-[13.5px]">Loading your {isNotesView ? "notes" : "snippets"}...</p>
         </div>
       ) : filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center text-center py-24 px-6 rounded-2xl border border-dashed border-[var(--border)]">
+        <div className="flex flex-col items-center justify-center text-center py-24 px-6 rounded-xl border border-dashed border-[var(--border)]">
           {isNotesView ? (
             <StickyNote size={32} className="text-[var(--text-muted)] mb-3" />
           ) : (

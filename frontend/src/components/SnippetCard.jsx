@@ -74,7 +74,7 @@ export default function SnippetCard({
           {snippet.code.trim() || "Empty note"}
         </p>
       ) : (
-        <pre className="snipbox-code text-[12.5px] leading-relaxed overflow-hidden max-h-[6.5rem] rounded-xl bg-[var(--surface-2)]/50 px-3.5 py-3 m-0">
+        <pre className="snipbox-code text-[12.5px] leading-relaxed overflow-hidden max-h-[6.5rem] rounded-xl bg-[var(--surface-2)]/50 py-3 m-0">
           <code
             dangerouslySetInnerHTML={{
               __html:

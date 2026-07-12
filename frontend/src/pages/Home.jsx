@@ -73,6 +73,16 @@ export default function Home() {
         disabled: false,
       };
 
+  const handleTypeChange = (newType) => {
+    setType(newType);
+    // If we were editing a note (language stored as "notes") and the user
+    // switches to Code, there's no valid language selected yet — default
+    // to JavaScript instead of showing a blank/invalid selection.
+    if (newType === "code" && !LANGUAGES.some((l) => l.value === language)) {
+      setLanguage("javascript");
+    }
+  };
+
   const extensions = useMemo(
     () => [getLanguageExtension(language), editorFontTheme],
     [language],
@@ -100,7 +110,7 @@ export default function Home() {
           type,
         });
         toast.success(type === "code" ? "Snippet updated" : "Note updated");
-        navigate("/snippets");
+        navigate("/snippets", { state: { type } });
       } else {
         await createSnippet({
           title,
@@ -109,8 +119,7 @@ export default function Home() {
           type,
         });
         toast.success(type === "code" ? "Snippet saved" : "Note saved");
-        setTitle("");
-        setCode("");
+        navigate("/snippets", { state: { type } });
       }
     } catch (err) {
       toast.error(err.message || "Something went wrong");
@@ -147,7 +156,7 @@ export default function Home() {
         <SegmentedToggle
           options={CONTENT_TYPES}
           value={type}
-          onChange={setType}
+          onChange={handleTypeChange}
         />
 
         <input

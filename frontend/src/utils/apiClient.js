@@ -19,8 +19,11 @@ export async function apiFetch(path, { method = "GET", body, headers = {} } = {}
   });
 
   // Token missing/expired/invalid — clear the stale session and bounce
-  // to login rather than showing a confusing in-app error.
-  if (response.status === 401) {
+  // to login rather than showing a confusing in-app error. This only
+  // applies when we actually sent a token; login/register calls send no
+  // token, so a 401 there means "wrong credentials", not "session expired",
+  // and should fall through to the normal error handling below.
+  if (response.status === 401 && token) {
     clearAuth();
     if (window.location.pathname !== "/login") {
       window.location.href = "/login";

@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import Layout from "./layouts/Layout";
 import Home from "./pages/Home";
 import Snippets from "./pages/Snippets";
@@ -13,6 +14,18 @@ import "./styles/print.css";
 function App() {
   return (
     <BrowserRouter>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 2500,
+          style: {
+            background: "var(--surface)",
+            color: "var(--text)",
+            border: "1px solid var(--border)",
+          },
+        }}
+      />
+
       <Routes>
         {/* Guest-only — logged-in users get bounced back to "/" */}
         <Route element={<GuestRoute />}>
