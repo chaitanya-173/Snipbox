@@ -78,7 +78,7 @@ export default function Snippets() {
   }, [snippets, type, query, sortBy]);
 
   const handleEdit = (snippet) => {
-    navigate("/", { state: { snippet } });
+    navigate("/create", { state: { snippet } });
   };
 
   const handleCopy = async (snippet) => {
@@ -199,7 +199,7 @@ export default function Snippets() {
           </p>
           {!query && (
             <button
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/create")}
               className="mt-5 px-5 py-2.5 rounded-xl text-[13.5px] font-medium
                          bg-[var(--primary)] text-white hover:opacity-90
                          transition-all duration-200 active:scale-95"

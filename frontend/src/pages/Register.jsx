@@ -25,7 +25,7 @@ export default function Register() {
     try {
       await register({ email: email.trim(), password });
       toast.success("Account created!");
-      navigate("/");
+      navigate("/create");
     } catch (err) {
       toast.error(err.message || "Something went wrong");
     } finally {

@@ -8,7 +8,7 @@ export default function GlobalShortcuts() {
   const navigate = useNavigate();
   const { toggleTheme } = useTheme();
 
-  useShortcut("g h", () => navigate("/"), {
+  useShortcut("g h", () => navigate("/create"), {
     description: "Go to Create",
     scope: "Navigation",
   });

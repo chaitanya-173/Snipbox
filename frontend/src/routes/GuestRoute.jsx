@@ -5,5 +5,5 @@ import { useAuth } from "../context/AuthContext";
 // reason to see these forms again — send them back to the app.
 export default function GuestRoute() {
   const { user } = useAuth();
-  return user ? <Navigate to="/" replace /> : <Outlet />;
+  return user ? <Navigate to="/create" replace /> : <Outlet />;
 }

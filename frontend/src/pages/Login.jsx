@@ -22,7 +22,7 @@ export default function Login() {
     try {
       await login({ email: email.trim(), password });
       toast.success("Welcome back!");
-      navigate("/");
+      navigate("/create");
     } catch (err) {
       toast.error(err.message || "Something went wrong");
     } finally {

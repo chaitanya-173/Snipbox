@@ -39,7 +39,7 @@ export default function Home() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // If we arrived here via navigate("/", { state: { snippet } }) from an
+  // If we arrived here via navigate("/create", { state: { snippet } }) from an
   // "Edit" button, we're in edit mode. Otherwise it's a fresh snippet.
   const editingSnippet = location.state?.snippet ?? null;
   const isEditMode = Boolean(editingSnippet);

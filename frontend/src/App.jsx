@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Layout from "./layouts/Layout";
+import Landing from "./pages/Landing";
 import Home from "./pages/Home";
 import Snippets from "./pages/Snippets";
 import Login from "./pages/Login";
@@ -32,7 +33,10 @@ function App() {
       <ShortcutsHelpModal />
 
       <Routes>
-        {/* Guest-only — logged-in users get bounced back to "/" */}
+        {/* Public marketing page — redirects logged-in visitors to /create itself */}
+        <Route path="/" element={<Landing />} />
+
+        {/* Guest-only — logged-in users get bounced to /create */}
         <Route element={<GuestRoute />}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -41,7 +45,7 @@ function App() {
         {/* Protected — requires a session, redirects to /login otherwise */}
         <Route element={<ProtectedRoute />}>
           <Route element={<Layout />}>
-            <Route path="/" element={<Home />} />
+            <Route path="/create" element={<Home />} />
             <Route path="/snippets" element={<Snippets />} />
           </Route>
         </Route>

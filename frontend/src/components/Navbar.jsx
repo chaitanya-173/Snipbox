@@ -8,7 +8,7 @@ import Tooltip from "./Tooltip";
 import ConfirmDialog from "./ConfirmDialog";
 
 const navLinks = [
-  { to: "/", label: "Create", end: true },
+  { to: "/create", label: "Create", end: true },
   { to: "/snippets", label: "My Snippets", end: false },
 ];
 
@@ -57,7 +57,8 @@ export default function Navbar() {
   }, [location.pathname]);
 
   return (
-    <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-3xl">
+    <>
+      <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-3xl">
       <nav
         className="flex items-center justify-between gap-3 px-3 py-2.5
                    rounded-2xl border border-[var(--border)]
@@ -66,7 +67,7 @@ export default function Navbar() {
                    transition-colors duration-300"
       >
         {/* Logo */}
-        <NavLink to="/" className="flex items-center gap-1.5 shrink-0 pl-1">
+        <NavLink to="/create" className="flex items-center gap-1.5 shrink-0 pl-1">
           <Code2
             size={22}
             strokeWidth={2.4}
@@ -207,6 +208,7 @@ export default function Navbar() {
           )}
         </div>
       </nav>
+      </header>
 
       <ConfirmDialog
         open={confirmingLogout}
@@ -217,6 +219,6 @@ export default function Navbar() {
         onConfirm={handleLogout}
         onCancel={() => setConfirmingLogout(false)}
       />
-    </header>
+    </>
   );
 }
