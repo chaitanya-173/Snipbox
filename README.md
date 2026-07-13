@@ -8,6 +8,7 @@ Save, organize, edit, search, and export reusable code snippets (and quick notes
 
 ## ✨ Features
 
+- **Public landing page** — hero, live feature demos, and scroll animations, with real dark/light product screenshots that crossfade with the site's theme toggle
 - **JWT Authentication** — register/login with bcrypt-hashed passwords, protected routes, guest-only auth pages
 - **Code + Notes in one place** — a sliding toggle switches the entire app between snippet mode and lightweight note mode
 - **Custom code editor** — CodeMirror 6 with a hand-built theme (no default themes), auto-growing height, 8 languages
@@ -40,30 +41,43 @@ Save, organize, edit, search, and export reusable code snippets (and quick notes
 - Backend → [Render](https://render.com)
 - Database → [Aiven](https://aiven.io) (managed MySQL, free tier)
 
+## 🧭 Routes
+
+| Path | Access | Page |
+|---|---|---|
+| `/` | Public | Landing page (auto-redirects to `/create` if already logged in) |
+| `/login`, `/register` | Guest-only | Redirects to `/create` if already logged in |
+| `/create` | Protected | Create / edit a snippet or note |
+| `/snippets` | Protected | My Snippets — search, sort, grid |
+
 ## 📁 Project Structure
 
 ```
 SnipBox/
 ├── frontend/
+│   ├── public/
+│   │   └── landing/          # Cropped product screenshots used on the landing page
 │   └── src/
-│       ├── components/     # Navbar, SnippetCard, IconButton, ConfirmDialog, ShortcutsHelpModal...
-│       ├── context/        # ThemeContext, AuthContext, PrintContext, ShortcutsContext
-│       ├── hooks/          # useShortcut, useFocusTrap
-│       ├── layouts/        # Layout (app shell), AuthLayout (login/register shell)
-│       ├── pages/          # Home, Snippets, Login, Register, NotFound
-│       ├── routes/         # ProtectedRoute, GuestRoute
-│       ├── services/       # authService, snippetService (API calls)
-│       ├── utils/          # apiClient, authStorage, languages, theming, platform
-│       └── styles/         # Prism + print stylesheets
+│       ├── components/       # Navbar, SnippetCard, IconButton, ConfirmDialog,
+│       │                     # ShortcutsHelpModal, GlobalShortcuts, Reveal,
+│       │                     # ThemeSwapImage, TiltCard...
+│       ├── context/          # ThemeContext, AuthContext, PrintContext, ShortcutsContext
+│       ├── hooks/            # useShortcut, useFocusTrap
+│       ├── layouts/          # Layout (app shell), AuthLayout (login/register shell)
+│       ├── pages/            # Landing, Home, Snippets, Login, Register, NotFound
+│       ├── routes/           # ProtectedRoute, GuestRoute
+│       ├── services/         # authService, snippetService (API calls)
+│       ├── utils/            # apiClient, authStorage, languages, theming, platform
+│       └── styles/           # Prism + print stylesheets
 │
 └── backend/
     └── src/
-        ├── config/         # MySQL connection pool
-        ├── controllers/    # auth + snippet business logic
-        ├── models/         # raw SQL queries
-        ├── routes/         # Express routers
-        ├── validators/     # express-validator rule sets
-        └── middleware/     # JWT auth guard, validation, error handling
+        ├── config/            # MySQL connection pool
+        ├── controllers/       # auth + snippet business logic
+        ├── models/            # raw SQL queries
+        ├── routes/            # Express routers
+        ├── validators/        # express-validator rule sets
+        └── middleware/        # JWT auth guard, validation, error handling
 ```
 
 ## 🚀 Getting Started
@@ -75,7 +89,7 @@ SnipBox/
 ### 1. Clone & install
 
 ```bash
-git clone https://github.com/<your-username>/snipbox.git
+git clone https://github.com/chaitanya-173/Snipbox.git
 cd snipbox
 ```
 
@@ -121,9 +135,11 @@ DB_PORT=3306
 DB_USER=root
 DB_PASSWORD=your_mysql_password
 DB_NAME=snipbox
+DB_SSL=false
 JWT_SECRET=a_long_random_string
 CLIENT_URL=http://localhost:5173
 ```
+Set `DB_SSL=true` when connecting to Aiven (or any managed MySQL host that requires TLS).
 
 **`frontend/.env`**
 ```
