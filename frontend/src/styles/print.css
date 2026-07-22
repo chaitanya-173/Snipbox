@@ -48,6 +48,43 @@
   }
 }
 
+/* Rich text notes content in the PDF export / print view */
+.print-note-content p { margin: 0 0 0.85em; }
+.print-note-content p:last-child { margin-bottom: 0; }
+.print-note-content h1,
+.print-note-content h2,
+.print-note-content h3 {
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 1em 0 0.5em;
+  color: #f5f5f5;
+}
+.print-note-content h1:first-child,
+.print-note-content h2:first-child,
+.print-note-content h3:first-child { margin-top: 0; }
+.print-note-content h1 { font-size: 1.5em; }
+.print-note-content h2 { font-size: 1.3em; }
+.print-note-content h3 { font-size: 1.1em; }
+.print-note-content ul,
+.print-note-content ol {
+  margin: 0 0 0.85em;
+  padding-left: 1.4em;
+}
+.print-note-content ul { list-style: disc; }
+.print-note-content ol { list-style: decimal; }
+.print-note-content li { margin: 0.2em 0; }
+.print-note-content blockquote {
+  margin: 0.9em 0;
+  padding-left: 1em;
+  border-left: 3px solid #14b8a6;
+  color: #c7c7c7;
+  font-style: italic;
+}
+.print-note-content a { color: #14b8a6; text-decoration: underline; }
+.print-note-content strong { font-weight: 700; }
+.print-note-content em { font-style: italic; }
+.print-note-content mark { border-radius: 3px; padding: 0.05em 0.15em; color: #1F2937; }
+
 /* Prism syntax colors */
 .print-code .token.comment {
   color: #a3a3a3;

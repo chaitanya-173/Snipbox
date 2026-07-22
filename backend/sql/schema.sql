@@ -1,6 +1,3 @@
--- Run this once against your MySQL server to set up the database.
--- e.g. mysql -u root -p < sql/schema.sql
-
 CREATE DATABASE IF NOT EXISTS snipbox
   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -20,10 +17,12 @@ CREATE TABLE IF NOT EXISTS snippets (
   type ENUM('code', 'notes') NOT NULL DEFAULT 'code',
   language VARCHAR(50) NOT NULL DEFAULT 'javascript',
   code LONGTEXT NOT NULL,
+  pinned TINYINT(1) NOT NULL DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT fk_snippets_user
     FOREIGN KEY (user_id) REFERENCES users(id)
     ON DELETE CASCADE,
-  INDEX idx_snippets_user_id (user_id)
+  INDEX idx_snippets_user_id (user_id),
+  INDEX idx_snippets_user_pinned (user_id, pinned)
 );

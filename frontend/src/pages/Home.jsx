@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import CodeMirror from "@uiw/react-codemirror";
 import { EditorView } from "@codemirror/view";
@@ -15,6 +15,8 @@ import { LANGUAGES, getLanguageExtension } from "../utils/languages";
 import { snipboxDark, snipboxLight } from "../utils/codeEditorTheme";
 // import { githubDark as snipboxDark, githubLight as snipboxLight } from "@uiw/codemirror-theme-github";
 import { createSnippet, updateSnippet } from "../services/snippetService";
+import { stripHtml, isRichTextEmpty } from "../utils/richText";
+import { loadDraft, saveDraft, clearDraft, isDraftMeaningful } from "../utils/draftStorage";
 
 const CONTENT_TYPES = [
   { value: "code", label: "Code" },
@@ -44,17 +46,42 @@ export default function Home() {
   const editingSnippet = location.state?.snippet ?? null;
   const isEditMode = Boolean(editingSnippet);
 
+  // In create mode (not editing an existing snippet), a previous unsaved
+  // draft — if there is one — takes priority over blank defaults. This is
+  // what makes navigating to /snippets and back not lose what you typed.
+  const draft = useMemo(() => (isEditMode ? null : loadDraft()), [isEditMode]);
+
   const initialType =
     editingSnippet?.type ??
-    (editingSnippet?.language === "notes" ? "notes" : "code");
+    (editingSnippet?.language === "notes" ? "notes" : "code") ??
+    draft?.type ??
+    "code";
 
-  const [type, setType] = useState(initialType);
-  const [title, setTitle] = useState(editingSnippet?.title ?? "");
+  const [type, setType] = useState(draft?.type ?? initialType);
+  const [title, setTitle] = useState(editingSnippet?.title ?? draft?.title ?? "");
   const [language, setLanguage] = useState(
-    editingSnippet?.language ?? "javascript",
+    editingSnippet?.language ?? draft?.language ?? "javascript",
   );
-  const [code, setCode] = useState(editingSnippet?.code ?? "");
+  const [code, setCode] = useState(editingSnippet?.code ?? draft?.code ?? "");
   const [saving, setSaving] = useState(false);
+
+  // Let the user know their in-progress draft came back, once, on mount.
+  const notifiedDraftRef = useRef(false);
+  useEffect(() => {
+    if (!isEditMode && !notifiedDraftRef.current && isDraftMeaningful(draft)) {
+      notifiedDraftRef.current = true;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Persist the in-progress draft as the user types, so leaving /create
+  // (navigating away, refreshing, closing the tab) never loses it. Only
+  // active in create mode — edit mode always reloads a fresh snippet via
+  // location.state, so there's nothing here worth shadowing it with.
+  useEffect(() => {
+    if (isEditMode) return;
+    saveDraft({ type, title, language, code });
+  }, [isEditMode, type, title, language, code]);
 
   const isNotes = type === "notes";
   const headerLabel = isNotes
@@ -97,7 +124,7 @@ export default function Home() {
           ? "Give your snippet a title"
           : "Give your note a title",
       );
-    if (!code.trim())
+    if (isNotes ? isRichTextEmpty(code) : !code.trim())
       return toast.error(
         type === "code" ? "Snippet can't be empty" : "Note can't be empty",
       );
@@ -120,6 +147,7 @@ export default function Home() {
           code,
           type,
         });
+        clearDraft();
         toast.success(type === "code" ? "Snippet saved" : "Note saved");
         navigate("/snippets", { state: { type } });
       }
@@ -131,9 +159,10 @@ export default function Home() {
   };
 
   const handleCopy = async () => {
-    if (!code.trim()) return toast.error("Nothing to copy yet");
+    if (isNotes ? isRichTextEmpty(code) : !code.trim())
+      return toast.error("Nothing to copy yet");
     try {
-      await navigator.clipboard.writeText(code);
+      await navigator.clipboard.writeText(isNotes ? stripHtml(code) : code);
       toast.success("Copied!");
     } catch {
       toast.error("Couldn't copy");
@@ -141,7 +170,8 @@ export default function Home() {
   };
 
   const handleConvert = () => {
-    if (!code.trim()) return toast.error("Nothing to convert yet");
+    if (isNotes ? isRichTextEmpty(code) : !code.trim())
+      return toast.error("Nothing to convert yet");
     requestPrint({
       title: title.trim() || (isNotes ? "Untitled note" : "Untitled snippet"),
       language: isNotes ? "notes" : language,

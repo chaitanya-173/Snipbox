@@ -49,17 +49,16 @@ export default function PrintableSnippet({ data }) {
       </div>
 
       {isNotes ? (
-        <p
+        <div
+          className="print-note-content"
           style={{
             fontSize: "14px",
             lineHeight: 1.75,
-            whiteSpace: "pre-wrap",
             wordBreak: "break-word",
             color: "#f5f5f5",
           }}
-        >
-          {code}
-        </p>
+          dangerouslySetInnerHTML={{ __html: code }}
+        />
       ) : (
         <pre
           className="print-code"

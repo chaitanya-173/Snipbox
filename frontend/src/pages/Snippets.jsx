@@ -6,7 +6,7 @@ import SegmentedToggle from "../components/SegmentedToggle";
 import SnippetCard from "../components/SnippetCard";
 import ConfirmDialog from "../components/ConfirmDialog";
 import LanguageSelect from "../components/LanguageSelect";
-import { getSnippets, deleteSnippet } from "../services/snippetService";
+import { getSnippets, deleteSnippet, togglePinSnippet } from "../services/snippetService";
 import { usePrint } from "../context/PrintContext";
 import { useShortcut } from "../hooks/useShortcut";
 
@@ -62,19 +62,25 @@ export default function Snippets() {
         return s.title.toLowerCase().includes(q) || s.code.toLowerCase().includes(q);
       });
 
-    return [...list].sort((a, b) => {
+    const sortFn = (a, b) => {
       switch (sortBy) {
         case "oldest":
-          return new Date(a.updatedAt) - new Date(b.updatedAt);
+          return new Date(a.updated_at) - new Date(b.updated_at);
         case "name-asc":
           return a.title.localeCompare(b.title);
         case "name-desc":
           return b.title.localeCompare(a.title);
         case "newest":
         default:
-          return new Date(b.updatedAt) - new Date(a.updatedAt);
+          return new Date(b.updated_at) - new Date(a.updated_at);
       }
-    });
+    };
+
+    // Pinned items always float to the top as their own group, sorted by
+    // the chosen order within that group — same for the rest below them.
+    const pinned = list.filter((s) => s.pinned).sort(sortFn);
+    const unpinned = list.filter((s) => !s.pinned).sort(sortFn);
+    return [...pinned, ...unpinned];
   }, [snippets, type, query, sortBy]);
 
   const handleEdit = (snippet) => {
@@ -110,6 +116,23 @@ export default function Snippets() {
 
   const handleConvert = (snippet) => {
     requestPrint(snippet);
+  };
+
+  const handlePin = async (snippet) => {
+    // Optimistic toggle so the card reorders instantly instead of waiting
+    // on the round trip; rolled back if the request actually fails.
+    setSnippets((prev) =>
+      prev.map((s) => (s.id === snippet.id ? { ...s, pinned: !s.pinned } : s)),
+    );
+    try {
+      await togglePinSnippet(snippet.id);
+      toast.success(snippet.pinned ? "Unpinned" : "Pinned to top");
+    } catch (err) {
+      setSnippets((prev) =>
+        prev.map((s) => (s.id === snippet.id ? { ...s, pinned: snippet.pinned } : s)),
+      );
+      toast.error(err.message || "Couldn't update pin");
+    }
   };
 
   const confirmDelete = async () => {
@@ -219,6 +242,7 @@ export default function Snippets() {
               onShare={handleShare}
               onCopy={handleCopy}
               onConvert={handleConvert}
+              onPin={handlePin}
             />
           ))}
         </div>

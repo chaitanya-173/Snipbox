@@ -5,6 +5,7 @@ import {
   createSnippet,
   updateSnippet,
   deleteSnippet,
+  togglePin,
 } from "../controllers/snippetController.js";
 import { snippetBodyValidator, idParamValidator } from "../validators/snippetValidators.js";
 import { validate } from "../middleware/validate.js";
@@ -18,6 +19,7 @@ router.get("/", getSnippets);
 router.get("/:id", idParamValidator, validate, getSnippet);
 router.post("/", snippetBodyValidator, validate, createSnippet);
 router.put("/:id", idParamValidator, snippetBodyValidator, validate, updateSnippet);
+router.patch("/:id/pin", idParamValidator, validate, togglePin);
 router.delete("/:id", idParamValidator, validate, deleteSnippet);
 
 export default router;

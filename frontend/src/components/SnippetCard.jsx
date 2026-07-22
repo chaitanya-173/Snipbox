@@ -1,7 +1,8 @@
-import { Pencil, Trash2, Copy, FileDown, Calendar } from "lucide-react";
+import { Pencil, Trash2, Copy, FileDown, Calendar, Pin, PinOff } from "lucide-react";
 import IconButton from "./IconButton";
 import { highlightCode } from "../utils/highlightCode";
 import { LANGUAGES } from "../utils/languages";
+import { stripHtml } from "../utils/richText";
 
 function formatDate(iso) {
   return new Date(iso).toLocaleDateString("en-US", {
@@ -17,8 +18,11 @@ export default function SnippetCard({
   onDelete,
   onCopy,
   onConvert,
+  onPin,
 }) {
   const isNotes = snippet.type === "notes";
+  const isPinned = Boolean(snippet.pinned);
+  const notesPreviewText = isNotes ? stripHtml(snippet.code) : "";
   const previewSource = snippet.code.split("\n").slice(0, 4).join("\n");
   const languageLabel = isNotes
     ? "NOTES"
@@ -45,27 +49,40 @@ export default function SnippetCard({
       onClick={handleCardActivate}
       onKeyDown={handleCardKeyDown}
       aria-label={`Open ${snippet.title}`}
-      className="group flex flex-col gap-4 rounded-xl border border-[var(--border)]
-                 bg-[var(--surface)] p-5 transition-all duration-300 ease-out cursor-pointer
+      className={`group relative flex flex-col gap-4 rounded-xl border p-5
+                 transition-all duration-300 ease-out cursor-pointer
                  hover:-translate-y-1 hover:scale-[1.015]
                  hover:border-[var(--primary)]/40
                  hover:shadow-[0_16px_40px_-16px_rgba(0,0,0,0.35)]
                  focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--primary)]/20
-                 focus-visible:border-[var(--primary)]/50"
+                 focus-visible:border-[var(--primary)]/50
+                 ${
+                   isPinned
+                     ? "border-[var(--accent)]/40 bg-[var(--accent)]/[0.04] shadow-[0_8px_28px_-16px_rgba(249,115,22,0.4)]"
+                     : "border-[var(--border)] bg-[var(--surface)]"
+                 }`}
     >
       {/* Title + actions */}
       <div className="flex items-start justify-between gap-3">
         <h3
           title={snippet.title}
-          className="flex-1 min-w-0 truncate text-[17px] font-semibold text-[var(--text)] leading-snug pt-1"
+          className="flex-1 min-w-0 flex items-center gap-2 truncate text-[17px] font-semibold text-[var(--text)] leading-snug pt-1"
         >
-          {snippet.title}
+          {isPinned && (
+            <Pin size={14} className="shrink-0 text-[var(--accent)] fill-[var(--accent)]" />
+          )}
+          <span className="truncate">{snippet.title}</span>
         </h3>
 
         <div
           className="flex items-center gap-1.5 shrink-0"
           onClick={(e) => e.stopPropagation()}
         >
+          <IconButton
+            icon={isPinned ? PinOff : Pin}
+            label={isPinned ? "Unpin" : "Pin to top"}
+            onClick={() => onPin(snippet)}
+          />
           <IconButton
             icon={Pencil}
             label="Edit"
@@ -92,7 +109,7 @@ export default function SnippetCard({
       {/* Preview */}
       {isNotes ? (
         <p className="text-[13.5px] text-[var(--text-muted)] leading-relaxed line-clamp-3 min-h-[4.5rem]">
-          {snippet.code.trim() || "Empty note"}
+          {notesPreviewText || "Empty note"}
         </p>
       ) : (
         <pre className="snipbox-code text-[12.5px] leading-relaxed overflow-hidden max-h-[6.5rem] rounded-xl bg-[var(--surface-2)]/50 pl-2.5 pr-3.5 py-3 m-0">

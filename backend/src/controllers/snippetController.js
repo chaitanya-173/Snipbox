@@ -5,6 +5,7 @@ import {
   createSnippet as createSnippetModel,
   updateSnippet as updateSnippetModel,
   deleteSnippet as deleteSnippetModel,
+  togglePinnedSnippet,
 } from "../models/snippetModel.js";
 
 export async function getSnippets(req, res, next) {
@@ -67,6 +68,16 @@ export async function deleteSnippet(req, res, next) {
     const deleted = await deleteSnippetModel(req.params.id, req.userId);
     if (!deleted) return res.status(404).json({ message: "Snippet not found" });
     res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function togglePin(req, res, next) {
+  try {
+    const snippet = await togglePinnedSnippet(req.params.id, req.userId);
+    if (!snippet) return res.status(404).json({ message: "Snippet not found" });
+    res.json({ snippet });
   } catch (err) {
     next(err);
   }

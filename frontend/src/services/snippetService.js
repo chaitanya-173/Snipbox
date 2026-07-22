@@ -34,3 +34,8 @@ export async function updateSnippet(id, { title, language, code, type = "code" }
 export async function deleteSnippet(id) {
   await apiFetch(`/snippets/${id}`, { method: "DELETE" });
 }
+
+export async function togglePinSnippet(id) {
+  const data = await apiFetch(`/snippets/${id}/pin`, { method: "PATCH" });
+  return data.snippet;
+}
